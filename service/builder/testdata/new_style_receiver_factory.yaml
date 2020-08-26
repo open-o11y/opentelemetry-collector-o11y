@@ -1,0 +1,10 @@
+receivers:
+  newstylereceiver:
+exporters:
+  exampleexporter:
+
+service:
+  pipelines:
+    traces:
+      receivers: [newstylereceiver]
+      exporters: [exampleexporter]
