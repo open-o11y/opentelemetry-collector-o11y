@@ -24,7 +24,6 @@ import (
 	"github.com/o11y/opentelemetry-collector-o11y/extension/healthcheckextension"
 	"github.com/o11y/opentelemetry-collector-o11y/extension/pprofextension"
 	"github.com/o11y/opentelemetry-collector-o11y/extension/zpagesextension"
-	"github.com/o11y/opentelemetry-collector-o11y/processor/batchprocessor"
 	"github.com/o11y/opentelemetry-collector-o11y/receiver/otlpreceiver"
 )
 
@@ -62,7 +61,6 @@ func Components() (
 	}
 
 	processors, err := component.MakeProcessorFactoryMap(
-		batchprocessor.NewFactory(),
 	)
 	if err != nil {
 		errs = append(errs, err)

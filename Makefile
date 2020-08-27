@@ -58,6 +58,8 @@ all-env:
 .PHONY: all
 all: checklicense impi lint misspell test otelcol
 
+.PHONY: betatest
+
 .PHONY: testbed-loadtest
 testbed-loadtest: otelcol
 	cd ./testbed/tests && ./runtests.sh
@@ -159,7 +161,7 @@ install-tools:
 
 .PHONY: otelcol
 otelcol:
-	GO111MODULE=on CGO_ENABLED=0 go build -o ~/pipeline_custom/otelcol_$(GOOS)_$(GOARCH)$(EXTENSION) $(BUILD_INFO) ./cmd/otelcol
+	GO111MODULE=on CGO_ENABLED=0 go build -o ./bin/otelcol_$(GOOS)_$(GOARCH)$(EXTENSION) $(BUILD_INFO) ./cmd/otelcol
 
 .PHONY: run
 run:

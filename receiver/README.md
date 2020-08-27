@@ -1,23 +1,13 @@
 # General Information
 A receiver is how data gets into the OpenTelemetry Collector. Generally, a receiver
 accepts data in a specified format, translates it into the internal format and
-passes it to [processors](../processor/README.md)
+passes it to processors
 and [exporters](../exporter/README.md)
 defined in the applicable [pipelines](../docs/pipelines.md).
 The format of the traces and metrics supported are receiver specific.
 
-Supported trace receivers (sorted alphabetically):
-- [Jaeger Receiver](jaegerreceiver/README.md)
-- [OpenCensus Receiver](opencensusreceiver/README.md)
-- [OpenTelemetry Receiver](otlpreceiver/README.md)
-- [Zipkin Receiver](zipkinreceiver/README.md)
-- [Kafka Receiver](kafkareceiver/README.md)
-
 Supported metric receivers (sorted alphabetically):
-- [Host Metrics Receiver](hostmetricsreceiver/README.md)
-- [OpenCensus Receiver](opencensusreceiver/README.md)
 - [OpenTelemetry Receiver](otlpreceiver/README.md)
-- [Prometheus Receiver](prometheusreceiver/README.md)
 
 The [contributors repository](https://github.com/open-telemetry/opentelemetry-collector-contrib)
  has more receivers that can be added to custom builds of the collector.
