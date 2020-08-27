@@ -54,8 +54,8 @@ exporters:
     endpoint: "https://aps-workspaces-beta.us-west-2.amazonaws.com/workspaces/yang-yu-intern-test-ws/remote_write"
     namespace: otel-collector
     auth:
-      region: "us-west-2"
-      service: "stealfire"
+      region: "us-east-2"
+      service: "aps"
     timeout: 10s
   logging:
     loglevel: debug
