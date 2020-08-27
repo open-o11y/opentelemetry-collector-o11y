@@ -1,4 +1,6 @@
 # OpenTelemetry Collector O11y
+Note: this repository has the same content as this [branch](https://github.com/open-o11y/opentelemetry-collector/tree/load-generator). The difference is that reference to go.opentelemetry.io/collector/ are replaced with this repository's module name. This is because OTLP definitions are in `./internal` in Collector master, so to access OTLP and packages that depends on OTLP, I had to copy their definitions here. 
+
 
 This repository is focused on building and packaging the OpenTelemetry Collector with a Prometheus remote write exporter
  supporting Sig V4 to export to AWS services. See [Testing](#testing) section on how to generate and send a OTLP metric 
