@@ -1,9 +1,0 @@
-package testdata
-
-
-import (
-    "github.com/o11y/opentelemetry-collector-o11y/exporter/exporter1"
-)
-
-func main() {
-}

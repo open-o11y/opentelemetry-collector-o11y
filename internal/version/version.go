@@ -1,10 +1,10 @@
-// Copyright The OpenTelemetry Authors
+// Copyright 2020, Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//       http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,35 +20,16 @@ import (
 	"runtime"
 )
 
-const (
-	buildDev     = "dev"
-	buildRelease = "release"
-)
-
 // Version variable will be replaced at link time after `make` has been run.
 var Version = "latest"
 
 // GitHash variable will be replaced at link time after `make` has been run.
 var GitHash = "<NOT PROPERLY GENERATED>"
 
-// BuildType should be one of (dev, release).
-var BuildType = buildDev
-
-// IsDevBuild returns true if this is a development (local) build.
-func IsDevBuild() bool {
-	return BuildType == buildDev
-}
-
-// IsReleaseBuild returns true if this is a release build.
-func IsReleaseBuild() bool {
-	return BuildType == buildRelease
-}
-
 // InfoVar is a singleton instance of the Info struct.
 var InfoVar = Info([][2]string{
 	{"Version", Version},
 	{"GitHash", GitHash},
-	{"BuildType", BuildType},
 	{"Goversion", runtime.Version()},
 	{"OS", runtime.GOOS},
 	{"Architecture", runtime.GOARCH},

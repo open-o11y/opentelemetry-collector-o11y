@@ -1,10 +1,10 @@
-// Copyright The OpenTelemetry Authors
+// Copyright 2020, Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//       http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,4 @@
 
 package version
 
-import (
-	"strings"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-)
-
-func TestInfoString(t *testing.T) {
-	infoString := InfoVar.String()
-	for _, el := range InfoVar {
-		assert.True(t, strings.Contains(infoString, el[0]))
-		assert.True(t, strings.Contains(infoString, el[1]))
-	}
-}
+// TODO: Add tests

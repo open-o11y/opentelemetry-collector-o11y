@@ -1,10 +1,10 @@
-// Copyright The OpenTelemetry Authors
+// Copyright 2020, Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//       http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,38 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Program otelcol is the OpenTelemetry Collector that collects stats
-// and traces and exports to a configured backend.
 package main
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/o11y/opentelemetry-collector-o11y/internal/version"
-	"github.com/o11y/opentelemetry-collector-o11y/service"
-	"github.com/o11y/opentelemetry-collector-o11y/service/defaultcomponents"
+	"github.com/open-o11y/opentelemetry-collector-o11y/internal/version"
+
+	"go.opentelemetry.io/collector/component"
+	"go.opentelemetry.io/collector/service"
 )
 
 func main() {
-	factories, err := defaultcomponents.Components()
+	factories, err := components()
 	if err != nil {
 		log.Fatalf("failed to build default components: %v", err)
 	}
 
-	info := service.ApplicationStartInfo{
-		ExeName:  "otelcol",
-		LongName: "OpenTelemetry Collector",
+	info := component.ApplicationStartInfo{
+		ExeName:  "AWS Collector",
+		LongName: "AWS Collector for Cortex Exporter",
 		Version:  version.Version,
 		GitHash:  version.GitHash,
 	}
 
-	if err := run(service.Parameters{ApplicationStartInfo: info, Factories: factories}); err != nil {
+	params := service.Parameters{Factories: factories, ApplicationStartInfo: info}
+
+	if err := run(params); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func runInteractive(params service.Parameters) error {
+func run(params service.Parameters) error {
 	app, err := service.New(params)
 	if err != nil {
 		return fmt.Errorf("failed to construct the application: %w", err)

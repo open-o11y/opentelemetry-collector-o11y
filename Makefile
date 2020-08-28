@@ -7,6 +7,8 @@ ALL_SRC := $(shell find . -name '*.go' \
 							-not -path '*/internal/data/opentelemetry-proto-gen/*' \
 							-not -path './.circleci/scripts/reportgenerator/*' \
 							-not -path './examples/demo/app/*' \
+							-not -path './test/*' \
+							-not -path './internal/*' \
 							-type f | sort)
 
 # ALL_PKGS is the list of all packages where ALL_SRC files reside.
@@ -33,7 +35,7 @@ BUILD_TYPE?=release
 
 
 GIT_SHA=$(shell git rev-parse --short HEAD)
-BUILD_INFO_IMPORT_PATH=github.com/o11y/opentelemetry-collector-o11y/internal/version
+BUILD_INFO_IMPORT_PATH=go.opentelemetry.io/collector/internal/version
 BUILD_X1=-X $(BUILD_INFO_IMPORT_PATH).GitHash=$(GIT_SHA)
 ifdef VERSION
 BUILD_X2=-X $(BUILD_INFO_IMPORT_PATH).Version=$(VERSION)
@@ -56,9 +58,7 @@ all-env:
 .DEFAULT_GOAL := all
 
 .PHONY: all
-all: checklicense impi lint misspell test otelcol
-
-.PHONY: betatest
+all: impi lint misspell test otelcol
 
 .PHONY: testbed-loadtest
 testbed-loadtest: otelcol
@@ -87,7 +87,7 @@ benchmark:
 .PHONY: test-with-cover
 test-with-cover:
 	@echo Verifying that all packages have test files to count in coverage
-	@internal/buildscripts/check-test-files.sh $(subst github.com/o11y/opentelemetry-collector-o11y/,./,$(ALL_PKGS))
+	@internal/buildscripts/check-test-files.sh $(subst go.opentelemetry.io/collector/,./,$(ALL_PKGS))
 	@echo pre-compiling tests
 	@time go test -i $(ALL_PKGS)
 	$(GO_ACC) $(ALL_PKGS)
@@ -139,12 +139,12 @@ lint: lint-static-check
 
 .PHONY: impi
 impi:
-	@$(IMPI) --local github.com/o11y/opentelemetry-collector-o11y --scheme stdThirdPartyLocal --skip internal/data/opentelemetry-proto ./...
+	@$(IMPI) --local go.opentelemetry.io/collector --scheme stdThirdPartyLocal --skip internal/data/opentelemetry-proto ./...
 
 .PHONY: fmt
 fmt:
 	gofmt  -w -s ./
-	goimports -w  -local github.com/o11y/opentelemetry-collector-o11y ./
+	goimports -w  -local go.opentelemetry.io/collector ./
 
 .PHONY: install-tools
 install-tools:
@@ -161,7 +161,7 @@ install-tools:
 
 .PHONY: otelcol
 otelcol:
-	GO111MODULE=on CGO_ENABLED=0 go build -o ./bin/otelcol_$(GOOS)_$(GOARCH)$(EXTENSION) $(BUILD_INFO) ./cmd/otelcol
+	GO111MODULE=on CGO_ENABLED=0 go build -o ~/pipeline_custom/otelcol_$(GOOS)_$(GOARCH)$(EXTENSION) $(BUILD_INFO) ./cmd/otelcol
 
 .PHONY: run
 run:
@@ -237,7 +237,7 @@ OPENTELEMETRY_PROTO_FILES := $(subst $(OPENTELEMETRY_PROTO_SRC_DIR)/,,$(wildcard
 PROTO_TARGET_GEN_DIR=internal/data/opentelemetry-proto-gen
 
 # Go package name to use for generated files.
-PROTO_PACKAGE=github.com/o11y/opentelemetry-collector-o11y/$(PROTO_TARGET_GEN_DIR)
+PROTO_PACKAGE=go.opentelemetry.io/collector/$(PROTO_TARGET_GEN_DIR)
 
 # Intermediate directory used during generation.
 PROTO_INTERMEDIATE_DIR=internal/data/tempprotodir
@@ -267,7 +267,7 @@ genproto_sub:
 	cp -R $(OPENTELEMETRY_PROTO_SRC_DIR)/* $(PROTO_INTERMEDIATE_DIR)
 
 	@echo Modify them in the intermediate directory.
-	$(foreach file,$(OPENTELEMETRY_PROTO_FILES),$(call exec-command,sed 's+github.com/open-telemetry/opentelemetry-proto/gen/go/+github.com/o11y/opentelemetry-collector-o11y/internal/data/opentelemetry-proto-gen/+g' $(OPENTELEMETRY_PROTO_SRC_DIR)/$(file) > $(PROTO_INTERMEDIATE_DIR)/$(file)))
+	$(foreach file,$(OPENTELEMETRY_PROTO_FILES),$(call exec-command,sed 's+github.com/open-telemetry/opentelemetry-proto/gen/go/+go.opentelemetry.io/collector/internal/data/opentelemetry-proto-gen/+g' $(OPENTELEMETRY_PROTO_SRC_DIR)/$(file) > $(PROTO_INTERMEDIATE_DIR)/$(file)))
 
 	@echo Generate Go code from .proto files in intermediate directory.
 	$(foreach file,$(OPENTELEMETRY_PROTO_FILES),$(call exec-command,cd $(PROTO_INTERMEDIATE_DIR) && protoc --gogofaster_out=plugins=grpc:./ -I./ $(file)))
@@ -297,7 +297,19 @@ genpdata:
 .PHONY: check-contrib
 check-contrib:
 	@echo Setting contrib at $(CONTRIB_PATH) to use this core checkout
-	make -C $(CONTRIB_PATH) for-all CMD="go mod edit -replace github.com/o11y/opentelemetry-collector-o11y=$(CURDIR)"
+	make -C $(CONTRIB_PATH) for-all CMD="go mod edit -replace go.opentelemetry.io/collector=$(CURDIR)"
 	make -C $(CONTRIB_PATH) test
 	@echo Restoring contrib to no longer use this core checkout
-	make -C $(CONTRIB_PATH) for-all CMD="go mod edit -dropreplace github.com/o11y/opentelemetry-collector-o11y"
+	make -C $(CONTRIB_PATH) for-all CMD="go mod edit -dropreplace go.opentelemetry.io/collector"
+
+.PHONY: testaps
+testaps: otelcol run-colletor-to-aps send-load
+
+.PHONY: run-colletor-to-aps
+run-colletor-to-aps:
+	GO111MODULE=on go run --race ./cmd/otelcol/... --config  ./test/otel-collector-config.yaml &
+
+.PHONY: send-load
+send-load:
+	@echo Starting OTLP load generator
+	go run ./test/otlploadgenerator/*.go
