@@ -7,8 +7,8 @@ ALL_SRC := $(shell find . -name '*.go' \
 							-not -path '*/internal/data/opentelemetry-proto-gen/*' \
 							-not -path './.circleci/scripts/reportgenerator/*' \
 							-not -path './examples/demo/app/*' \
-							-not -path './test/*' \
 							-not -path './internal/*' \
+							-not -path './test/*' \
 							-type f | sort)
 
 # ALL_PKGS is the list of all packages where ALL_SRC files reside.
@@ -312,4 +312,4 @@ run-colletor-to-aps:
 .PHONY: send-load
 send-load:
 	@echo Starting OTLP load generator
-	go run ./test/otlploadgenerator/*.go
+	go run ./exporter/cortexexporter/test/*.go

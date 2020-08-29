@@ -24,9 +24,10 @@ exporters:
             Prometheus-Remote-Write-Version: "0.1.0"
             X-Scope-OrgID: 234
         aws_auth:
+            enabled: true
             region: "us-west-2"
             service: "aps"
-            debug: "enabled"
+            debug: true
 service:
     pipelines:
         metrics:

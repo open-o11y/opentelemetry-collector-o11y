@@ -2,7 +2,7 @@
 
 This repository is focused on building and packaging the OpenTelemetry Collector with a Cortex exporter
  supporting Sig V4 to export to AWS services. The exporter is built on top of the Prometheus remote write exporter from
- upstream repository. See [this page](#testing) for implementation detail of the Cortex exporter. 
+ upstream repository. See [this pacakge](./exporter/cortexexporter) for implementation detail of the Cortex exporter. 
 
 ## Components
 
@@ -56,18 +56,3 @@ service:
 ```
 
 see a complete list of configuration options and explanation of the prometheus remote write exporter [here](./exporter/prometheusremotewriteexporter/README.md)
-
-## Testing 
-
-To test the exporter, run the following command:
-
-```
-make testaps
-```
-
-This starts a Collector based on configuration in `/test/otel-config.yaml` and runs OTLP metric load generator to send 
-metrics to the exporter. OTLP metrics are generated based on `/test/otlploadgenerator/data.txt`. After the load generator exists,
- it runs a querier to get metrics from the specified endpoint and write the output in `/test/querier/ans.txt`. 
-
-More details of testing, load generator and querier are described [here](./test/README.md). 
-

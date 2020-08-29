@@ -3,14 +3,15 @@ package main
 import "time"
 
 var (
-	path      = "./data.txt" // data file path
-	item      = 1000         // total number of metrics / lines in output file
-	metric    = "metricName" // base metricName. output file has only unique metricName with a number suffix
-	gauge     = "gauge"
-	counter   = "counter"
-	histogram = "histogram"
-	summary   = "summary"
-	types     = []string{ // types of metrics generatedq
+	inputPath  = "./data.txt" // data file path
+	outputPath = "./ans.txt"
+	item       = 1000         // total number of metrics / lines in output file
+	metric     = "metricName" // base metricName. output file has only unique metricName with a number suffix
+	gauge      = "gauge"
+	counter    = "counter"
+	histogram  = "histogram"
+	summary    = "summary"
+	types      = []string{ // types of metrics generatedq
 		counter,
 		gauge,
 		histogram,

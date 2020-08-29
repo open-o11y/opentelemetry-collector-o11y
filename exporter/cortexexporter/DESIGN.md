@@ -18,9 +18,9 @@ defined in a config.go file; this configuration specifies the parameters that it
 component with. 
 
 The Cortex exporter follows this pattern and has a configuration and a exporter. Its [configuration](./config.go) 
-is the same as the upstream exporter, with the addition of a `AuthCfg` field specifying information for AWS Sig V4. 
+is the same as the upstream exporter, with the addition of a `AuthSettings` field specifying information for AWS Sig V4. 
 Its [factory](factory.go) is different from the upstream exporter's factory; 
-the factory can process the `AuthCfg` field in configuration and create a `http.RoundTripper` that can sign each request. 
+the factory can process the `AuthSettings` field in configuration and create a `http.RoundTripper` that can sign each request. 
 
 During application initialization, the Collector asks exporter 
 builders, a service package component, for an implementation of the MetricExporter interface. Then, the exporter builder
@@ -30,38 +30,26 @@ When invoked, the factory initializes an implementation of the upstream exporter
 upstream exporter. The following is a code snippet of this process. The complete code is implemented here [here](factory.go)
 
 ```
-func createMetricsExporter(_ context.Context, _ component.ExporterCreateParams,
-   	cfg configmodels.Exporter) (component.MetricsExporter, error) {
-   
-    // get configuartion for this component
-   	prwCfg, ok := cfg.(*Config)
-   	...
+cfg configmodels.Exporter) (component.MetricsExporter, error) {
+	// check if the configuration is valid
+	prwCfg, ok := cfg.(*Config)
 
-    // check if AWS auth configuration is present
-   	if prwCfg.AuthCfg != nil {
-   		authConfig := make(map[string]interface{})
-   		authConfig[serviceStr] = prwCfg.AuthCfg[serviceStr]
-   		authConfig[regionStr] = prwCfg.AuthCfg[regionStr]
-   		authConfig[origClientStr] = client
-   		authConfig[debugStr] = prwCfg.AuthCfg[debugStr]
-   
-   		roundTripper, err := NewAuth(authConfig)
-   		if err != nil {
-   			return nil, err
-   		}
-   
-   		client.Transport = roundTripper
-   	}
-   
-    // initialize an upstream exporter and pass it an http.Client with interceptor
-   	prwe, err := prw.NewPrwExporter(prwCfg.Namespace, prwCfg.HTTPClientSettings.Endpoint, client)
-   	if err != nil {
-   		return nil, err
-   	}
-    ...
-   
-   	return prwexp, err
-   }
+	// load AWS auth configurations and create interceptor based on configuration
+	if prwCfg.AuthSettings.Enabled {
+		roundTripper, err := NewAuth(prwCfg.AuthSettings, client)
+		if err != nil {
+			return nil, err
+		}
+		client.Transport = roundTripper
+	}
+
+	// initialize an upstream exporter and pass it an http.Client with interceptor
+	prwe, err := prw.NewPrwExporter(prwCfg.Namespace, prwCfg.HTTPClientSettings.Endpoint, client)
+	if err != nil {
+		return nil, err
+	}
+
+	return prwexp, err
 ```
 
 The factory then returns the Cortex exporter implementation back to the Collector application, which runs the data 
@@ -70,7 +58,7 @@ exporter, except it signs each outgoing request.
 
 The following diagram demonstrates the initialization process.
 
-![Image: Class Diagram.png](./img/Class Diagram.png)
+![Image: Class Diagram.png](./img/ClassDiagram.png)
 
 ## References 
 - Upstream Exporter [DESIGN](https://github.com/open-telemetry/opentelemetry-collector/blob/master/exporter/prometheusremotewriteexporter/DESIGN.md) 

@@ -19,7 +19,18 @@ type Config struct {
 	Namespace string `mapstructure:"namespace"`
 
 	// AWS Sig V4 configuration options
-	AuthCfg map[string]string `mapstructure:"aws_auth"`
+	AuthSettings AuthSettings `mapstructure:"aws_auth"`
 
 	HTTPClientSettings confighttp.HTTPClientSettings `mapstructure:",squash"`
+}
+
+// AuthSettings defines AWS authentication configurations for SigningRoundTripper
+type AuthSettings struct {
+	Enabled bool				`mapstructure:"enabled"`
+	// region string for AWS Sig V4
+	Region string				`mapstructure:"region"`
+	// service string for AWS Sig V4
+	Service string				`mapstructure:"service"`
+	// whether AWS Sig v4 debug information should be printed
+	Debug bool                	`mapstructure:"debug"`
 }

@@ -3,7 +3,6 @@ package cortexexporter
 import (
 	"context"
 	"errors"
-
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/confighttp"
 	"go.opentelemetry.io/collector/config/configmodels"
@@ -12,19 +11,19 @@ import (
 )
 
 // TODO: issues to file upstream:
-// 		-  fix translation from OC to internal so that temporality is set
+// 		- fix translation from OC to internal so that temporality is set
 //      - add logging support in the Prometheus remote write exporter upstream
 //      - add a README to the exporterhelper package
-//      - support some sort of plugin mechanism for authentication for different compoents
+//      - support some sort of plugin mechanism for authentication for different components
 
 const (
-	// The value of "type" key in configuration.
-	typeStr       = "cortex"
+	typeStr       = "cortex"			// The value of "type" key in configuration.
+
+	// string keys for authCfg
 	regionStr     = "region"
 	serviceStr    = "service"
 	origClientStr = "origClient"
 	debugStr      = "debug"
-	enabledStr    = "enabled"
 )
 
 // NewFactory returns a factory of the Cortex exporter that can be registered to the Collector.
@@ -47,19 +46,12 @@ func createMetricsExporter(_ context.Context, _ component.ExporterCreateParams,
 		return nil, cerr
 	}
 
-	// check if AWS auth configuration is present
-	if prwCfg.AuthCfg != nil {
-		authConfig := make(map[string]interface{})
-		authConfig[serviceStr] = prwCfg.AuthCfg[serviceStr]
-		authConfig[regionStr] = prwCfg.AuthCfg[regionStr]
-		authConfig[origClientStr] = client
-		authConfig[debugStr] = prwCfg.AuthCfg[debugStr]
-
-		roundTripper, err := NewAuth(authConfig)
+	// load AWS auth configurations and create interceptor based on configuration
+	if prwCfg.AuthSettings.Enabled {
+		roundTripper, err := NewAuth(prwCfg.AuthSettings, client)
 		if err != nil {
 			return nil, err
 		}
-
 		client.Transport = roundTripper
 	}
 

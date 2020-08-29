@@ -1,26 +1,29 @@
-# Testing Pipeline for Prometheus Remote Write Exporter
-The this package contains utilities for testing the Prometheus remote write exporter. 
+# Cortex Exporter Pipeline Test
 
-- `otlploadgenerator` generates and
-sends metric to OTLP receiver of the Collector. 
-- `querier` validates the correctness of the metric by querying a backend.
-- `otel-collector-config.yaml` specifies the configuration of the OpenTelemetry Collector.
+This package contains utilities for testing the Cortex exporter. It has the following components:
 
-To start a Collector instance and send to it using `otlploadgenerator`, run the following command:
-
+- a [data generator](data.go) that randomly generates and writes metrics in the following format to a text file:
+```  		 
+ name, type, label1 labelvalue1 , value1 value2 value3 value4 value5
 ```
+- a [OTLP sender](otlp.go) that reads from the text file, then builds and send metrics to the collector.
+
+- a [querier](querier.go) that reads from the text file, query metrics in it, and writes the result to another
+text file in the same format as the input file. 
+
+- Input and output file path, metric type, number of metrics, labels, and value bounds of the 
+ generated metrics are all defined [here](main.go).
+
+## Running the Pipeline Test
+
+To run the test, you need to first [setup a Cortex instance](https://cortexmetrics.io/docs/getting-started/getting-started-chunks-storage/)
+and update the endpoint value in the sample [Collector configuration](otel-collector-config.yaml) and in [main.go](main.go).
+
+Then, run the following command to start the test:
+
+```$xslt
 make testaps
 ```
-This command builds the Collector binary, runs the Collector instance based on `otel-collector-config.yaml`, then starts
-`otlploadgenerator` to start sending metrics to the Collector. 
 
-Note: With this command, the collector process has to be terminated manually after each run
-## `otlploadgenerator`
-The load generator first creates a `data.txt` file. This file is need so that the `querier` knows what the input data is.
-Each line in the file represents and OTLP metric. Then, it parses each line from the file and build OTLP metric. 
-It then creates a gRPC connection to the Collector, and sends the metric it builds. 
-
-See more detail [here](./otlploadgenerator/README.md)
-
-## `querier`
-To be added.
+This builds and runs the Collector, starts the data generator, the OTLP sender, and the querier. After the command finishes,
+the content of the [input text file](data.txt) and the [output file](ans.txt) should be the same. 

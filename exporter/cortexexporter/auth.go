@@ -2,7 +2,7 @@ package cortexexporter
 
 import (
 	"bytes"
-	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,13 +14,13 @@ import (
 	v4 "github.com/aws/aws-sdk-go/aws/signer/v4"
 )
 
+
 // SigningRoundTripper is a Custom RoundTripper that performs AWS Sig V4
 type SigningRoundTripper struct {
 	transport http.RoundTripper
 	signer    *v4.Signer
-	service   string
 	cfg       *aws.Config
-	debug     bool
+	params    AuthSettings
 }
 
 // RoundTrip signs each outgoing request
@@ -39,11 +39,11 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 	body := bytes.NewReader(content)
 
 	// Sign the request
-	_, err = si.signer.Sign(req, body, si.service, *si.cfg.Region, time.Now())
+	_, err = si.signer.Sign(req, body, si.params.Service, *si.cfg.Region, time.Now())
 	if err != nil {
 		return nil, err
 	}
-	if si.debug {
+	if si.params.Debug {
 		requestDump, err := httputil.DumpRequest(req, false)
 		if err != nil {
 			log.Println(err)
@@ -57,7 +57,7 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 		return nil, err
 	}
 
-	if si.debug {
+	if si.params.Debug {
 		responseDump, err := httputil.DumpResponse(resp, false)
 		if err != nil {
 			log.Println(err)
@@ -70,67 +70,49 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 
 // NewAuth takes a map of strings as parameters and return a http.RoundTripper that perform Sig V4 signing on each
 // request.
-func NewAuth(params map[string]interface{}) (http.RoundTripper, error) {
-	debug, found := params[debugStr]
-	var debugFlag bool
-	if found {
-		debugFlag = debug == enabledStr
-	}
-	reg, found := params[regionStr]
-	if !found {
-		return nil, errors.New("plugin error: region not specified")
-	}
-	region, isString := reg.(string)
-	if !isString {
-		return nil, errors.New("plugin error: region is not string")
-	}
-	serv, found := params[serviceStr]
-	if !found {
-		return nil, errors.New("plugin error: service not specified")
-	}
-
-	service, isString := serv.(string)
-	if !isString {
-		return nil, errors.New("plugin error: region is not string")
-	}
-
-	client, found := params[origClientStr]
-	if !found {
-		return nil, errors.New("plugin error: default client not specified")
-	}
-	origClient, isClient := client.(*http.Client)
-	if !isClient {
-		return nil, errors.New("plugin error: default client not specified")
+func NewAuth(params AuthSettings, origClient *http.Client) (http.RoundTripper, error) {
+	// check if region and service name are present
+	err := validateAuthSettings(params)
+	if err != nil {
+		log.Println(err)
+	 	return nil, err
 	}
 
 	// Initialize session with default credential chain
 	// https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(region)},
+		Region: aws.String(params.Region)},
 		aws.NewConfig().WithLogLevel(aws.LogDebugWithSigning),
 	)
 	if err != nil {
-		log.Println("AWS session initialization failed")
+		log.Println(err)
+		return nil, err
 	}
 
 	if _, err = sess.Config.Credentials.Get(); err != nil {
-		log.Println("AWS session initialized, but credentials are not loaded correctly")
+		log.Println(err)
+		return nil, err
 	}
 
 	// Get Credentials, either from ./aws or from environmental variables
 	creds := sess.Config.Credentials
 	signer := v4.NewSigner(creds)
-	if debugFlag {
+	if params.Debug {
 		signer.Debug = aws.LogDebugWithSigning
 		signer.Logger = aws.NewDefaultLogger()
 	}
 	rtp := SigningRoundTripper{
 		transport: origClient.Transport,
-		debug:     debugFlag,
 		signer:    signer,
 		cfg:       sess.Config,
-		service:   service,
+		params:    params,
 	}
 	// return a RoundTripper
 	return &rtp, nil
+}
+func validateAuthSettings(params AuthSettings) error {
+	if params.Enabled && params.Region == "" || params.Service == ""{
+		return fmt.Errorf("invalid authentication configuration")
+	}
+	return nil
 }

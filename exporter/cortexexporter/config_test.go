@@ -71,10 +71,11 @@ func Test_loadConfig(t *testing.T) {
 					"prometheus-remote-write-version": "0.1.0",
 					"x-scope-orgid":                   "234"},
 			},
-			AuthCfg: map[string]string{
-				"region":  "us-west-2",
-				"service": "aps",
-				"debug":   "enabled",
+			AuthSettings: AuthSettings{
+				Enabled: true,
+				Region:  "us-west-2",
+				Service: "aps",
+				Debug:   true,
 			},
 		})
 }

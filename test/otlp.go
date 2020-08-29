@@ -8,15 +8,15 @@ import (
 	"strings"
 	"time"
 
+	"google.golang.org/grpc"
+
 	service "github.com/open-telemetry/opentelemetry-proto/gen/go/collector/metrics/v1"
 	metrics "github.com/open-telemetry/opentelemetry-proto/gen/go/metrics/v1"
-	"google.golang.org/grpc"
 )
 
 type sender struct {
 	client service.MetricsServiceClient
 }
-
 
 func createAndSendLoad() {
 
@@ -36,7 +36,7 @@ func createAndSendLoad() {
 // createAndSendMetricsFromFile reads a text file, parse each line to build the corresponding otlp metric, then send the
 // metric to the Collector
 func (s *sender) createAndSendMetricsFromFile() {
-	file, err := os.Open(path)
+	file, err := os.Open(inputPath)
 	if err != nil {
 		log.Fatal(err)
 	}

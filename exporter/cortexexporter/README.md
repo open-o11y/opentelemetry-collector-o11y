@@ -32,6 +32,7 @@ The following settings can be optionally configured:
 - `read_buffer_size` (default = 0): ReadBufferSize for HTTP client.
 - `write_buffer_size` (default = 512 * 1024): WriteBufferSize for HTTP client.
 - `aws_auth`: whether each request should be singed with AWS Sig v4. The following settings must be configured:
+    - `enabled`: whether AWS Sig V4 Signing should be enabled.
     - `region`: region string used for AWS Sig V4 signing.
     - `service`: service string used for AWS Sig V4 signing.
     - `debug`: whether the Sig V4 signature as well as each of the HTTP request and response should be printed. 
@@ -48,3 +49,6 @@ The full list of settings exposed for this exporter are documented [here](./conf
 with detailed sample configurations [here](./testdata/config.yaml).
 
 _Here is a link to the overall project [design](./DESIGN.md)_
+
+## Testing 
+[This](../../test) package provide instructions on conducting integration test for the Cortex exporter.

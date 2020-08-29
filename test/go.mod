@@ -1,4 +1,4 @@
-module go.opentelemetry.io/collector/test/otlploadgenerator
+module github.com/o11y/openetelemetry-collector-o11y/exporter/cortexexporter/test/
 
 go 1.14
 
