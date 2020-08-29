@@ -13,7 +13,7 @@ import (
 
 const (
 	// The value of "type" key in configuration.
-	typeStr       = "prometheusremotewrite"
+	typeStr       = "cortex"
 	regionStr     = "region"
 	serviceStr    = "service"
 	origClientStr = "origClient"
@@ -77,8 +77,8 @@ func createDefaultConfig() configmodels.Exporter {
 			TypeVal: typeStr,
 			NameVal: typeStr,
 		},
-		Namespace: "",
-
+		Namespace:       "",
+		DebugLog:        false,
 		TimeoutSettings: exporterhelper.CreateDefaultTimeoutSettings(),
 		RetrySettings:   exporterhelper.CreateDefaultRetrySettings(),
 		QueueSettings:   qs,

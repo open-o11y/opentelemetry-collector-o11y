@@ -39,7 +39,6 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 	// Sign the request
 	_, err = si.signer.Sign(req, body, si.service, *si.cfg.Region, time.Now())
 	if err != nil {
-		// might need a response here
 		return nil, err
 	}
 
