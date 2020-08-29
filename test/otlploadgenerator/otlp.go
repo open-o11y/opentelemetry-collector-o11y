@@ -18,20 +18,20 @@ type sender struct {
 }
 
 var (
-	path      = "./data.txt" 				// data file path
-	item      = 1000         				// total number of metrics / lines in output file
-	metric    = "metricName" 				// base metricName. output file has only unique metricName with a number suffix
+	path      = "./data.txt" // data file path
+	item      = 1000         // total number of metrics / lines in output file
+	metric    = "metricName" // base metricName. output file has only unique metricName with a number suffix
 	gauge     = "gauge"
 	counter   = "counter"
 	histogram = "histogram"
 	summary   = "summary"
-	types     = []string{					// types of metrics generatedq
+	types     = []string{ // types of metrics generatedq
 		counter,
 		gauge,
 		histogram,
 		summary,
 	}
-	labels = []string{ 						// each metric will have from 1 to 4 sets of labels
+	labels = []string{ // each metric will have from 1 to 4 sets of labels
 		"label1 value1",
 		"label2 value2",
 		"label3 value3",
@@ -43,7 +43,7 @@ var (
 	bounds     = []float64{0.01, 0.5, 0.99} // fixed quantile/buckets
 
 	endpoint = "localhost:55680"
-	waitTime = 5 * time.Second				// wait time between two sends
+	waitTime = 5 * time.Second // wait time between two sends
 )
 
 func main() {
@@ -103,7 +103,7 @@ func (s *sender) createAndSendMetricsFromFile() {
 			log.Println("Invalid metric type")
 			continue
 		}
-		log.Printf("%+v\n",m)
+		log.Printf("%+v\n", m)
 		s.sendMetric(m)
 	}
 }

@@ -19,7 +19,7 @@ type SigningRoundTripper struct {
 	signer    *v4.Signer
 	service   string
 	cfg       *aws.Config
-	debug	  bool
+	debug     bool
 }
 
 // RoundTrip signs each outgoing request
@@ -43,7 +43,7 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 		return nil, err
 	}
 	if si.debug {
-		log.Printf("%+v\n",req)
+		log.Printf("%+v\n", req)
 	}
 	// Send the request to Cortex
 	resp, err := si.transport.RoundTrip(req)
@@ -53,7 +53,7 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 	}
 
 	if si.debug {
-		log.Printf("%+v\n",resp)
+		log.Printf("%+v\n", resp)
 	}
 
 	return resp, err
@@ -116,7 +116,7 @@ func NewAuth(params map[string]interface{}) (http.RoundTripper, error) {
 	}
 	rtp := SigningRoundTripper{
 		transport: origClient.Transport,
-		debug:	   debugFlag,
+		debug:     debugFlag,
 		signer:    signer,
 		cfg:       sess.Config,
 		service:   service,

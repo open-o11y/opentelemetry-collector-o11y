@@ -17,8 +17,8 @@ const (
 	regionStr     = "region"
 	serviceStr    = "service"
 	origClientStr = "origClient"
-	debugStr	  = "debug"
-	enabledStr 	  = "enabled"
+	debugStr      = "debug"
+	enabledStr    = "enabled"
 )
 
 func NewFactory() component.ExporterFactory {

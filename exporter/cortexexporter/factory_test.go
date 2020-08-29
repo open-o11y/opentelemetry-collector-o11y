@@ -1,14 +1,16 @@
 package cortexexporter
 
 import (
+	"context"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/configcheck"
 	"go.opentelemetry.io/collector/config/confighttp"
 	"go.opentelemetry.io/collector/config/configmodels"
 	"go.opentelemetry.io/collector/config/configtls"
-	"testing"
-	"context"
 )
 
 //Tests whether or not the default Exporter factory can instantiate a properly interfaced Exporter with default conditions

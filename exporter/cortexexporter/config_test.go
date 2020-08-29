@@ -74,7 +74,7 @@ func Test_loadConfig(t *testing.T) {
 			AuthCfg: map[string]string{
 				"region":  "us-west-2",
 				"service": "aps",
-				"debug": "enabled",
+				"debug":   "enabled",
 			},
 		})
 }
