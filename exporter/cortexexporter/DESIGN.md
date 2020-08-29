@@ -17,9 +17,7 @@ and only exports the following combination:
 - Int64 or Double type with any temporality
 - MonotonicInt64, MonotonicDouble, Histogram, or Summary with only Cumulative temporality.
 
-
-
-
+## Configuration
 The following settings are required:
 - `endpoint`: protocol:host:port to which the exporter is going to send traces or metrics, using the HTTP/HTTPS protocol. 
 
@@ -33,7 +31,10 @@ The following settings can be optionally configured:
 - `timeout` (default = 5s): How long to wait until the connection is close.
 - `read_buffer_size` (default = 0): ReadBufferSize for HTTP client.
 - `write_buffer_size` (default = 512 * 1024): WriteBufferSize for HTTP client.
-
+- `aws_auth`: whether each request should be singed with AWS Sig v4
+            `region`: region string used for AWS Sig V4 signing
+            `service`: service string used for AWS Sig V4 signing
+            `debug`: whether the Sig V4 signature as well as each of the HTTP request and response should be printed. 
 Example:
 
 ```yaml

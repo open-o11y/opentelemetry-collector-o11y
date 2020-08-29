@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -43,7 +44,11 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 		return nil, err
 	}
 	if si.debug {
-		log.Printf("%+v\n", req)
+		requestDump, err := httputil.DumpRequest(req, false)
+		if err != nil {
+			log.Println(err)
+		}
+		log.Println(string(requestDump))
 	}
 	// Send the request to Cortex
 	resp, err := si.transport.RoundTrip(req)
@@ -53,7 +58,11 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 	}
 
 	if si.debug {
-		log.Printf("%+v\n", resp)
+		responseDump, err := httputil.DumpResponse(resp, false)
+		if err != nil {
+			log.Println(err)
+		}
+		log.Println(string(responseDump))
 	}
 
 	return resp, err
