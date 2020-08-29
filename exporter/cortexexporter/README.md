@@ -8,8 +8,8 @@ of the AWS SDK for Go.
 Note: this exporter intends to import and use the [Prometheus remote write exporter](https://github.com/open-telemetry/opentelemetry-collector/tree/master/exporter/prometheusremotewriteexporter)
 from upstream; However, since the Prometheus remote write exporter has not been fully merged upstream, the OpenTelemtry
 Collector code has been copied to `/internal` folder of this project, and a replace directive in `go.mod` redirects 
-imports of `go.opentelemtry.io/collector` to `/internal`. Once upstream code is fully merged and stable, the Collector
-copy and the replace directive in this project can be removed. 
+imports of `go.opentelemtry.io/collector` to `/internal/opentelemtry-collector`. Once upstream code is fully merged and 
+stable, the Collector code and the replace directive in this project can be removed. 
 
 Same as the Prometheus remote write exporter, this exporter checks the temporality and the type of each incoming metric 
 and only exports the following combination:
@@ -31,10 +31,12 @@ The following settings can be optionally configured:
 - `timeout` (default = 5s): How long to wait until the connection is close.
 - `read_buffer_size` (default = 0): ReadBufferSize for HTTP client.
 - `write_buffer_size` (default = 512 * 1024): WriteBufferSize for HTTP client.
-- `aws_auth`: whether each request should be singed with AWS Sig v4
-            `region`: region string used for AWS Sig V4 signing
-            `service`: service string used for AWS Sig V4 signing
-            `debug`: whether the Sig V4 signature as well as each of the HTTP request and response should be printed. 
+- `aws_auth`: whether each request should be singed with AWS Sig v4. The following settings must be configured:
+    - `region`: region string used for AWS Sig V4 signing.
+    - `service`: service string used for AWS Sig V4 signing.
+    - `debug`: whether the Sig V4 signature as well as each of the HTTP request and response should be printed. 
+    
+    
 Example:
 
 ```yaml

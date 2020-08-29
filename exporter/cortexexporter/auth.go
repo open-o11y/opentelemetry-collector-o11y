@@ -68,7 +68,8 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 	return resp, err
 }
 
-// NewAuth takes a map of strings as parameters and return a http.RoundTripper
+// NewAuth takes a map of strings as parameters and return a http.RoundTripper that perform Sig V4 signing on each
+// request.
 func NewAuth(params map[string]interface{}) (http.RoundTripper, error) {
 	debug, found := params[debugStr]
 	var debugFlag bool

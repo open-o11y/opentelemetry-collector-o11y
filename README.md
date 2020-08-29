@@ -16,25 +16,14 @@ An example Collector pipeline is illustrated below:
 
 ![Image: Repo README.png](./img/Pipeline.png)
 
+## Building
 
-## Initialization
+To build the Collector, run the following command: 
 
-Components in the collector are initialized by the Collector Service based on configuration. The factory and 
-configuration of a component are invoked at the initialization of the Collector Application, and they supply the 
-components with parameters components need. AWS Sig V4 support could be passed to the exporter by the factory without 
-impacting the data conversion and export logic. 
-
-The Prometheus remote write exporter use this pattern. During application initialization, the collector asks exporter 
-builders, a service package component, for an implementation of the MetricExporter interface. Then, the exporter builder
- invokes the factory code inside the Prometheus Remote Write Exporter package to create an instance of the Prometheus 
- Remote Write Exporter. When invoked, factory uses the exporter helper package to wrap the Exporter implementation 
- inside the MetricExporter interface, and returns the instance to the Collector Application. **The factory can also 
- pass in an [Sig V4 interceptor-attached http.Client](https://github.com/open-o11y/opentelemetry-collector/blob/d21a840612d40d935ccd52142f06e7106ee82384/exporter/prometheusremotewriteexporter/factory.go#L181)
- to the exporter**.  Finally, the Collector Application
-  assembles the export pipeline with the exporter. During an export operation, the exporter behaves the same, but the 
-  interceptor-attached http.Client performs signing of each request.
-
-![Image: Class Diagram(2).png](./img/ClassDiagram.png)
+```
+make otelcol
+```
+The resultant binary is under `/bin`.
 
 ## Sample Configuration
 
@@ -49,7 +38,7 @@ receivers:
          grpc:
 exporters:
   prometheusremotewrite:
-    endpoint: "https://aps-workspaces-beta.us-west-2.amazonaws.com/workspaces/yang-yu-intern-test-ws/remote_write"
+    endpoint: "http://localhost:9009"
     namespace: otel-collector
     auth:
       region: "us-west-2"

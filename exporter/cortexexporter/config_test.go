@@ -54,7 +54,7 @@ func Test_loadConfig(t *testing.T) {
 			},
 			Namespace: "test-space",
 			HTTPClientSettings: confighttp.HTTPClientSettings{
-				Endpoint: "localhost:8888",
+				Endpoint: "http://localhost:9009",
 				TLSSetting: configtls.TLSClientSetting{
 					TLSSetting: configtls.TLSSetting{
 						CAFile: "/var/lib/mycert.pem", //This is subject to change, but currently I have no idea what else to put here lol

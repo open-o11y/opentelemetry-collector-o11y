@@ -11,8 +11,11 @@ import (
 	prw "go.opentelemetry.io/collector/exporter/prometheusremotewriteexporter"
 )
 
-// TODO: file issue to fix translation from OC to internal so that temporality is set
-// TODO: add logging support in the Prometheus remote write exporter upstream
+// TODO: issues to file upstream:
+// 		-  fix translation from OC to internal so that temporality is set
+//      - add logging support in the Prometheus remote write exporter upstream
+//      - add a README to the exporterhelper package
+//      - support some sort of plugin mechanism for authentication for different compoents
 
 const (
 	// The value of "type" key in configuration.
@@ -24,6 +27,7 @@ const (
 	enabledStr    = "enabled"
 )
 
+// NewFactory returns a factory of the Cortex exporter that can be registered to the Collector.
 func NewFactory() component.ExporterFactory {
 	return exporterhelper.NewFactory(
 		typeStr,
@@ -33,7 +37,7 @@ func NewFactory() component.ExporterFactory {
 
 func createMetricsExporter(_ context.Context, _ component.ExporterCreateParams,
 	cfg configmodels.Exporter) (component.MetricsExporter, error) {
-
+	// check if the configuration is valid
 	prwCfg, ok := cfg.(*Config)
 	if !ok {
 		return nil, errors.New("invalid configuration")
@@ -42,6 +46,8 @@ func createMetricsExporter(_ context.Context, _ component.ExporterCreateParams,
 	if cerr != nil {
 		return nil, cerr
 	}
+
+	// check if AWS auth configuration is present
 	if prwCfg.AuthCfg != nil {
 		authConfig := make(map[string]interface{})
 		authConfig[serviceStr] = prwCfg.AuthCfg[serviceStr]
@@ -57,11 +63,14 @@ func createMetricsExporter(_ context.Context, _ component.ExporterCreateParams,
 		client.Transport = roundTripper
 	}
 
+	// initialize an upstream exporter and pass it an http.Client with interceptor
 	prwe, err := prw.NewPrwExporter(prwCfg.Namespace, prwCfg.HTTPClientSettings.Endpoint, client)
 	if err != nil {
 		return nil, err
 	}
 
+	// use upstream helper package to return an exporter that implements the required interface, and has timeout,
+	// queueing and retry feature enabled
 	prwexp, err := exporterhelper.NewMetricsExporter(
 		cfg,
 		prwe.PushMetrics,
