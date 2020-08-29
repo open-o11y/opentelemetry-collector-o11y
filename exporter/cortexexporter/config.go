@@ -18,6 +18,7 @@ type Config struct {
 	// See: https://prometheus.io/docs/practices/naming/#metric-names
 	Namespace string `mapstructure:"namespace"`
 
+	// AWS Sig V4 configuration options
 	AuthCfg map[string]string `mapstructure:"aws_auth"`
 
 	HTTPClientSettings confighttp.HTTPClientSettings `mapstructure:",squash"`
