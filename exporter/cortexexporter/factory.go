@@ -17,6 +17,8 @@ const (
 	regionStr     = "region"
 	serviceStr    = "service"
 	origClientStr = "origClient"
+	debugStr	  = "debug"
+	enabledStr 	  = "enabled"
 )
 
 func NewFactory() component.ExporterFactory {
@@ -42,6 +44,7 @@ func createMetricsExporter(_ context.Context, _ component.ExporterCreateParams,
 		authConfig[serviceStr] = prwCfg.AuthCfg[serviceStr]
 		authConfig[regionStr] = prwCfg.AuthCfg[regionStr]
 		authConfig[origClientStr] = client
+		authConfig[debugStr] = prwCfg.AuthCfg[debugStr]
 
 		roundTripper, err := NewAuth(authConfig)
 		if err != nil {
@@ -78,7 +81,6 @@ func createDefaultConfig() configmodels.Exporter {
 			NameVal: typeStr,
 		},
 		Namespace:       "",
-		DebugLog:        false,
 		TimeoutSettings: exporterhelper.CreateDefaultTimeoutSettings(),
 		RetrySettings:   exporterhelper.CreateDefaultRetrySettings(),
 		QueueSettings:   qs,

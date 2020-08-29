@@ -53,7 +53,6 @@ func Test_loadConfig(t *testing.T) {
 				MaxElapsedTime:  10 * time.Minute,
 			},
 			Namespace: "test-space",
-			DebugLog:  false,
 			HTTPClientSettings: confighttp.HTTPClientSettings{
 				Endpoint: "localhost:8888",
 				TLSSetting: configtls.TLSClientSetting{
@@ -75,6 +74,7 @@ func Test_loadConfig(t *testing.T) {
 			AuthCfg: map[string]string{
 				"region":  "us-west-2",
 				"service": "aps",
+				"debug": "enabled",
 			},
 		})
 }

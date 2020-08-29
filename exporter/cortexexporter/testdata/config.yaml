@@ -18,7 +18,6 @@ exporters:
             max_interval: 60s
             max_elapsed_time: 10m
         endpoint: "localhost:8888"
-        debug_log: false
         ca_file: "/var/lib/mycert.pem"
         write_buffer_size: 524288
         headers:
@@ -27,6 +26,7 @@ exporters:
         aws_auth:
             region: "us-west-2"
             service: "aps"
+            debug: "enabled"
 service:
     pipelines:
         metrics:

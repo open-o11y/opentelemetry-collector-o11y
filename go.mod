@@ -11,6 +11,7 @@ require (
 	github.com/hashicorp/consul/api v1.4.0 // indirect
 	github.com/hashicorp/serf v0.9.2 // indirect
 	github.com/mitchellh/go-testing-interface v1.0.3 // indirect
+	github.com/open-telemetry/opentelemetry-proto v0.4.0 // indirect
 	github.com/shirou/gopsutil v2.20.6+incompatible // indirect
 	github.com/stretchr/testify v1.6.1
 	go.opentelemetry.io/collector v0.9.0

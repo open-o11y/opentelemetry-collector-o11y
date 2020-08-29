@@ -19,6 +19,7 @@ type SigningRoundTripper struct {
 	signer    *v4.Signer
 	service   string
 	cfg       *aws.Config
+	debug	  bool
 }
 
 // RoundTrip signs each outgoing request
@@ -41,37 +42,30 @@ func (si *SigningRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 	if err != nil {
 		return nil, err
 	}
-
-	log.Println(req)
-
-	// requestDump, err := httputil.DumpRequest(req, true)
-	// if err != nil {
-	//	log.Println(err)
-	// }
-	// f, err := os.Create("./dat")
-	// defer f.Close()
-	// f.Write(requestDump)
-	// f.Sync()
-
+	if si.debug {
+		log.Printf("%+v\n",req)
+	}
 	// Send the request to Cortex
-	response, err := si.transport.RoundTrip(req)
+	resp, err := si.transport.RoundTrip(req)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
-	// log.Println(response)
-	bodyBytes, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal(err)
+
+	if si.debug {
+		log.Printf("%+v\n",resp)
 	}
-	bodyString := string(bodyBytes)
-	log.Println("response: ", bodyString)
-	return response, err
+
+	return resp, err
 }
 
 // NewAuth takes a map of strings as parameters and return a http.RoundTripper
 func NewAuth(params map[string]interface{}) (http.RoundTripper, error) {
-
+	debug, found := params[debugStr]
+	var debugFlag bool
+	if found {
+		debugFlag = debug == enabledStr
+	}
 	reg, found := params[regionStr]
 	if !found {
 		return nil, errors.New("plugin error: region not specified")
@@ -116,11 +110,13 @@ func NewAuth(params map[string]interface{}) (http.RoundTripper, error) {
 	// Get Credentials, either from ./aws or from environmental variables
 	creds := sess.Config.Credentials
 	signer := v4.NewSigner(creds)
-
-	signer.Debug = aws.LogDebugWithSigning
-	signer.Logger = aws.NewDefaultLogger()
+	if debugFlag {
+		signer.Debug = aws.LogDebugWithSigning
+		signer.Logger = aws.NewDefaultLogger()
+	}
 	rtp := SigningRoundTripper{
 		transport: origClient.Transport,
+		debug:	   debugFlag,
 		signer:    signer,
 		cfg:       sess.Config,
 		service:   service,

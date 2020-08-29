@@ -20,7 +20,5 @@ type Config struct {
 
 	AuthCfg map[string]string `mapstructure:"aws_auth"`
 
-	DebugLog bool `mapstructure:"debug_log"`
-
 	HTTPClientSettings confighttp.HTTPClientSettings `mapstructure:",squash"`
 }
