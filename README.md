@@ -1,19 +1,18 @@
 # OpenTelemetry Collector O11y
 
-This repository is focused on building and packaging the OpenTelemetry Collector with a Prometheus remote write exporter
- supporting Sig V4 to export to AWS services. See [Testing](#testing) section on how to generate and send a OTLP metric 
- load to a 
- Prometheus remote write backend.
+This repository is focused on building and packaging the OpenTelemetry Collector with a Cortex exporter
+ supporting Sig V4 to export to AWS services. The exporter is built on top of the Prometheus remote write exporter from
+ upstream repository. See [this page](#testing) for implementation detail of the Cortex exporter. 
 
 ## Components
 
 Most upstream components are removed and not included in the build. Available components are:
 
-* Receiver: OpenTelemetry Protocol(OTLP) receiver 
-* Processor: None
-* Exporter: Logging exporter, Prometheus remote write exporter
+* Receiver: OpenTelemetry Collector default receivers 
+* Processor: OpenTelemetry Collector default processors 
+* Exporter: OpenTelemetry Collector default processors and a Cortex Exporter supporting AWS Sig V4 signing. 
 
-A Collector pipeline with these components is illustrated below:
+An example Collector pipeline is illustrated below:
 
 ![Image: Repo README.png](./img/Pipeline.png)
 
