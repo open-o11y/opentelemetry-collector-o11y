@@ -11,6 +11,9 @@ import (
 	prw "go.opentelemetry.io/collector/exporter/prometheusremotewriteexporter"
 )
 
+// TODO: file issue to fix translation from OC to internal so that temporality is set
+// TODO: add logging support in the Prometheus remote write exporter upstream
+
 const (
 	// The value of "type" key in configuration.
 	typeStr       = "cortex"
@@ -75,6 +78,10 @@ func createDefaultConfig() configmodels.Exporter {
 	qs := exporterhelper.CreateDefaultQueueSettings()
 	qs.Enabled = false
 
+	// TODO: re-enable retry by default after componenterror.combineErrors upstream can return a permanent error if it is combined from permanent errors
+	ts := exporterhelper.CreateDefaultRetrySettings()
+	ts.Enabled = false
+
 	return &Config{
 		ExporterSettings: configmodels.ExporterSettings{
 			TypeVal: typeStr,
@@ -82,7 +89,7 @@ func createDefaultConfig() configmodels.Exporter {
 		},
 		Namespace:       "",
 		TimeoutSettings: exporterhelper.CreateDefaultTimeoutSettings(),
-		RetrySettings:   exporterhelper.CreateDefaultRetrySettings(),
+		RetrySettings:   ts,
 		QueueSettings:   qs,
 		HTTPClientSettings: confighttp.HTTPClientSettings{
 			Endpoint: "http://some.url:9411/api/prom/push",
