@@ -54,11 +54,11 @@ var (
 	awsService = "aps"
 	awsRegion  = "us-west-2"
 )
-
-func main() {
+func init() {
 	log.Println("initializing test pipeline...")
 
 	rand.Seed(time.Now().UnixNano())
+	randomSuffix = strconv.Itoa(rand.Intn(5000))
 
 	// attach sig v4 signer for querier
 	interceptor, err := NewAuth(awsService, awsRegion, http.DefaultTransport)
@@ -72,6 +72,8 @@ func main() {
 		Timeout:   requestTimeout,
 	}
 	log.Println("finished.")
+}
+func main() {
 	log.Println("waiting for the Collector to start...")
 
 	// wait for collector to start
