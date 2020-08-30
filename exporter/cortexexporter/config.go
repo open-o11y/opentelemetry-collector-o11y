@@ -26,11 +26,11 @@ type Config struct {
 
 // AuthSettings defines AWS authentication configurations for SigningRoundTripper
 type AuthSettings struct {
-	Enabled bool				`mapstructure:"enabled"`
+	Enabled bool `mapstructure:"enabled"`
 	// region string for AWS Sig V4
-	Region string				`mapstructure:"region"`
+	Region string `mapstructure:"region"`
 	// service string for AWS Sig V4
-	Service string				`mapstructure:"service"`
+	Service string `mapstructure:"service"`
 	// whether AWS Sig v4 debug information should be printed
-	Debug bool                	`mapstructure:"debug"`
+	Debug bool `mapstructure:"debug"`
 }

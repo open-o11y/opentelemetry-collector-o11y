@@ -117,15 +117,6 @@ func getIntDataPoint(labels []*common.StringKeyValue, value int64, ts uint64) *o
 	}
 }
 
-func getDoubleDataPoint(labels []*common.StringKeyValue, value float64, ts uint64) *otlp.DoubleDataPoint {
-	return &otlp.DoubleDataPoint{
-		Labels:            labels,
-		StartTimeUnixNano: 0,
-		TimeUnixNano:      ts,
-		Value:             value,
-	}
-}
-
 func getHistogramDataPoint(labels []*common.StringKeyValue, ts uint64, sum float64, count uint64, bounds []float64, buckets []uint64) *otlp.HistogramDataPoint {
 	bks := []*otlp.HistogramDataPoint_Bucket{}
 	for _, c := range buckets {
@@ -184,14 +175,14 @@ func buildHistogramMetric(name string, labels []*common.StringKeyValue, val []ui
 		},
 	}
 }
-func buildSummaryMetric(name string, labels []*common.StringKeyValue, val []uint64) *metrics.Metric {
-	sum := float64(val[0])
-	count := val[1]
+func buildSummaryMetric(name string, labels []*common.StringKeyValue, val []float64) *metrics.Metric {
+	sum := val[0]
+	count := uint64(val[1])
 	pcts := make([]float64, len(bounds), len(bounds))
 	values := make([]float64, len(bounds), len(bounds))
 	for i, bound := range bounds {
-		pcts[i] = float64(bound)
-		values[i] = float64(val[2+i])
+		pcts[i] = bound
+		values[i] = val[2+i]
 	}
 	return &metrics.Metric{
 		MetricDescriptor: getDescriptor(name, summaryComb, validCombinations),
@@ -214,6 +205,14 @@ func parseuUInt64Slice(str string) []uint64 {
 	for i, numStr := range arr {
 		num, _ := strconv.Atoi(numStr)
 		result[i] = uint64(num)
+	}
+	return result
+}
+func parseFloat64Slice(str string) []float64 {
+	arr := strings.Split(strings.Trim(str, space), space)
+	result := make([]float64, len(arr), len(arr))
+	for i, numStr := range arr {
+		result[i] = parseNumber(numStr)
 	}
 	return result
 }

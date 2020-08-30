@@ -3,6 +3,7 @@ package cortexexporter
 import (
 	"context"
 	"errors"
+
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/confighttp"
 	"go.opentelemetry.io/collector/config/configmodels"
@@ -17,7 +18,7 @@ import (
 //      - support some sort of plugin mechanism for authentication for different components
 
 const (
-	typeStr       = "cortex"			// The value of "type" key in configuration.
+	typeStr = "cortex" // The value of "type" key in configuration.
 
 	// string keys for authCfg
 	regionStr     = "region"

@@ -26,4 +26,5 @@ make testaps
 ```
 
 This builds and runs the Collector, starts the data generator, the OTLP sender, and the querier. After the command finishes,
-the content of the [input text file](data.txt) and the [output file](ans.txt) should be the same. 
+the content of the [input text file](data.txt) and the [output file](ans.txt) should be the same. Each querying requst 
+is AWS sig V4 signed. 

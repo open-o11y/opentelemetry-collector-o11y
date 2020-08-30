@@ -8,10 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"google.golang.org/grpc"
-
 	service "github.com/open-telemetry/opentelemetry-proto/gen/go/collector/metrics/v1"
 	metrics "github.com/open-telemetry/opentelemetry-proto/gen/go/metrics/v1"
+	"google.golang.org/grpc"
 )
 
 type sender struct {
@@ -55,17 +54,17 @@ func (s *sender) createAndSendMetricsFromFile() {
 		name := strings.Trim(params[0], space)
 		labelSet := getLabels(strings.Split(strings.Trim(params[2], space), space)...)
 
-		mTpye := params[1]
+		mType := params[1]
 		values := params[3]
 		var m *metrics.Metric
 		// build metrics
-		switch mTpye {
+		switch mType {
 		case gauge, counter:
 			m = buildScalarMetric(name, labelSet, parseNumber(values), intComb)
 		case histogram:
 			m = buildHistogramMetric(name, labelSet, parseuUInt64Slice(values))
 		case summary:
-			m = buildSummaryMetric(name, labelSet, parseuUInt64Slice(values))
+			m = buildSummaryMetric(name, labelSet, parseFloat64Slice(values))
 		default:
 			log.Println("Invalid metric type")
 			continue
@@ -75,9 +74,11 @@ func (s *sender) createAndSendMetricsFromFile() {
 	}
 }
 
+// sendMetric sends m to an endpoint using gRPC protocol. After the request is send, it waits for a while before
+// returning. The timeout for a request is 30 secondes by default
 func (s *sender) sendMetric(m *metrics.Metric) {
+	// build gRPC request
 	request := service.ExportMetricsServiceRequest{
-
 		ResourceMetrics: []*metrics.ResourceMetrics{
 			{
 				InstrumentationLibraryMetrics: []*metrics.InstrumentationLibraryMetrics{
@@ -90,7 +91,8 @@ func (s *sender) sendMetric(m *metrics.Metric) {
 			},
 		},
 	}
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	// specifc
+	ctx, _ := context.WithTimeout(context.Background(), requestTimeout)
 	_, err := s.client.Export(ctx, &request)
 	time.Sleep(waitTime)
 	if err != nil {

@@ -5,11 +5,12 @@ receivers:
 exporters:
   cortex:
     endpoint: "http://ec2-18-217-33-170.us-east-2.compute.amazonaws.com:9009/api/prom/push"
-    namespace: otel-collector
+    namespace: ""
     aws_auth:
+      enabled: true
       region: "us-west-2"
       service: "aps"
-      debug: "enabled"
+      debug: true
     timeout: 10s
   logging:
     loglevel: debug

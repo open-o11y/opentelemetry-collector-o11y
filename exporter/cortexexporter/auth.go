@@ -14,7 +14,6 @@ import (
 	v4 "github.com/aws/aws-sdk-go/aws/signer/v4"
 )
 
-
 // SigningRoundTripper is a Custom RoundTripper that performs AWS Sig V4
 type SigningRoundTripper struct {
 	transport http.RoundTripper
@@ -75,7 +74,7 @@ func NewAuth(params AuthSettings, origClient *http.Client) (http.RoundTripper, e
 	err := validateAuthSettings(params)
 	if err != nil {
 		log.Println(err)
-	 	return nil, err
+		return nil, err
 	}
 
 	// Initialize session with default credential chain
@@ -111,7 +110,7 @@ func NewAuth(params AuthSettings, origClient *http.Client) (http.RoundTripper, e
 	return &rtp, nil
 }
 func validateAuthSettings(params AuthSettings) error {
-	if params.Enabled && params.Region == "" || params.Service == ""{
+	if params.Enabled && params.Region == "" || params.Service == "" {
 		return fmt.Errorf("invalid authentication configuration")
 	}
 	return nil

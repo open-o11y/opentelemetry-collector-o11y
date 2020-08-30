@@ -2,7 +2,7 @@
 
 This repository is focused on building and packaging the OpenTelemetry Collector with a Cortex exporter
  supporting Sig V4 to export to AWS services. The exporter is built on top of the Prometheus remote write exporter from
- upstream repository. See [this pacakge](./exporter/cortexexporter) for implementation detail of the Cortex exporter. 
+ upstream repository. See [this package](./exporter/cortexexporter) for implementation detail of the Cortex exporter. 
 
 ## Components
 
