@@ -17,10 +17,9 @@ package main
 import (
 	"github.com/open-o11y/opentelemetry-collector-o11y/exporter/cortexexporter"
 
-	"go.opentelemetry.io/collector/receiver/otlpreceiver"
-
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/component/componenterror"
+	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 	"go.opentelemetry.io/collector/service/defaultcomponents"
 )
 
@@ -44,7 +43,9 @@ func components() (component.Factories, error) {
 		otlpreceiver.NewFactory(),
 	}
 	factories.Receivers, err = component.MakeReceiverFactoryMap(receivers...)
-
+	if err != nil {
+		errs = append(errs, err)
+	}
 	// add cortex exporter
 	exporters := []component.ExporterFactory{
 		cortexexporter.NewFactory(),
