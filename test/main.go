@@ -17,7 +17,7 @@ var (
 	queryPath      = cortexEndpoint + "/workspaces/yang-yu-intern-test-ws/api/v1/query?query="
 	inputPath      = "./test/data.txt" // data file path
 	outputPath     = "./test/ans.txt"
-	item           = 50           // total number of metrics / lines in output file
+	item           = 5           // total number of metrics / lines in output file
 	metric         = "metricName" // base metricName. output file has only unique metricName with a number suffix
 	gauge          = "gauge"
 	counter        = "counter"
@@ -25,7 +25,6 @@ var (
 	summary        = "summary"
 	types          = []string{ // types of metrics generatedq
 		counter,
-		gauge,
 		histogram,
 		summary,
 	}
@@ -58,7 +57,8 @@ var (
 func main() {
 	log.Println("initializing test pipeline...")
 
-	interceptor, err := NewAuth(awsService, awsRegion, http.DefaultTransport)
+	interceptor, err := NewAuth(awsService, awsRegion, http
+	gauge,.DefaultTransport)
 	if err != nil {
 		log.Println(err)
 		return
