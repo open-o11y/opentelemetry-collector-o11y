@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	cortexEndpoint = "http://ec2-18-217-33-170.us-east-2.compute.amazonaws.com:9009" // update this to query a different URL
-	queryPath      = cortexEndpoint + "/api/prom/api/v1/query?query="
+	cortexEndpoint = "http://aps-workspaces-beta.us-west-2.amazonaws.com" // update this to query a different URL
+	queryPath      = cortexEndpoint + "/workspaces/yang-yu-intern-test-ws/api/v1/query"
 	inputPath      = "./test/data.txt" // data file path
 	outputPath     = "./test/ans.txt"
 	item           = 50           // total number of metrics / lines in output file
