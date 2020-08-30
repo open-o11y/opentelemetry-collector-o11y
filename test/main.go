@@ -14,7 +14,7 @@ import (
 
 var (
 	cortexEndpoint = "http://aps-workspaces-beta.us-west-2.amazonaws.com" // update this to query a different URL
-	queryPath      = cortexEndpoint + "/workspaces/yang-yu-intern-test-ws/api/v1/query"
+	queryPath      = cortexEndpoint + "/workspaces/yang-yu-intern-test-ws/api/v1/query?query="
 	inputPath      = "./test/data.txt" // data file path
 	outputPath     = "./test/ans.txt"
 	item           = 50           // total number of metrics / lines in output file
@@ -69,14 +69,15 @@ func main() {
 		Timeout:   requestTimeout,
 	}
 	log.Println("finished.")
+	log.Println("waiting for the Collector to start...")
 
+	// wait for collector to start
+	time.Sleep(time.Second * 10)
 	log.Println("generating metrics...")
 	// Writes metrics in the following format to a text file:
 	// 		name, type, label1 labelvalue1 , value1 value2 value3 value4 value5
 	// gauge and counter has only one value
 	generateData()
-	// wait for collector to start
-	time.Sleep(time.Second * 10)
 	log.Println("finished.")
 
 	log.Println("sending metrics...")
