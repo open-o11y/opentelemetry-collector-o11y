@@ -27,8 +27,8 @@ func generateData() {
 		labelSize := rand.Intn(len(labels)) + 1
 		b := &strings.Builder{}
 		writeNameTypeLabel(mName, mType, labelSize, b)
-		switch mType{
-		case gauge, counter :
+		switch mType {
+		case gauge, counter:
 			b.WriteString(strconv.Itoa(rand.Intn(valueBound)))
 		case histogram:
 			count := 0

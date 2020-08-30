@@ -19,12 +19,6 @@ import (
 
 const (
 	typeStr = "cortex" // The value of "type" key in configuration.
-
-	// string keys for authCfg
-	regionStr     = "region"
-	serviceStr    = "service"
-	origClientStr = "origClient"
-	debugStr      = "debug"
 )
 
 // NewFactory returns a factory of the Cortex exporter that can be registered to the Collector.

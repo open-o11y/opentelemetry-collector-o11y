@@ -6,23 +6,24 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	v4 "github.com/aws/aws-sdk-go/aws/signer/v4"
 )
 
 var (
-	cortexEndpoint = "http://ec2-18-217-33-170.us-east-2.compute.amazonaws.com:9009"	// update this to query a different URL
-	queryPath     = cortexEndpoint + "/api/prom/api/v1/query?query="
-	inputPath     = "./test/data.txt" 	// data file path
-	outputPath    = "./test/ans.txt"
-	item          = 50         	// total number of metrics / lines in output file
-	metric        = "metricName" 	// base metricName. output file has only unique metricName with a number suffix
-	gauge         = "gauge"
-	counter       = "counter"
-	histogram     = "histogram"
-	summary       = "summary"
-	types         = []string{ 		// types of metrics generatedq
+	cortexEndpoint = "http://ec2-18-217-33-170.us-east-2.compute.amazonaws.com:9009" // update this to query a different URL
+	queryPath      = cortexEndpoint + "/api/prom/api/v1/query?query="
+	inputPath      = "./test/data.txt" // data file path
+	outputPath     = "./test/ans.txt"
+	item           = 50           // total number of metrics / lines in output file
+	metric         = "metricName" // base metricName. output file has only unique metricName with a number suffix
+	gauge          = "gauge"
+	counter        = "counter"
+	histogram      = "histogram"
+	summary        = "summary"
+	types          = []string{ // types of metrics generatedq
 		counter,
 		gauge,
 		histogram,
@@ -44,29 +45,28 @@ var (
 	requestTimeout = 30 * time.Second // timeout for each gRPC request
 	waitTime       = 1 * time.Second  // wait time between two sends
 
-	bucketStr = "bucket"
+	bucketStr   = "bucket"
 	quantileStr = "quantile"
 
-	randomSuffix = strconv.Itoa(rand.Intn(5000))	// random suffix to avoid metric name collision between two tests
-	client http.Client
+	randomSuffix = strconv.Itoa(rand.Intn(5000)) // random suffix to avoid metric name collision between two tests
+	client       http.Client
 
 	awsService = "aps"
-	awsRegion = "us-west-2"
-
+	awsRegion  = "us-west-2"
 )
 
 func main() {
 	log.Println("initializing test pipeline...")
 
-	interceptor, err := NewAuth(awsService,awsRegion, http.DefaultTransport)
+	interceptor, err := NewAuth(awsService, awsRegion, http.DefaultTransport)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	client = http.Client{
-		Transport:     interceptor,
-		Timeout:       requestTimeout,
+		Transport: interceptor,
+		Timeout:   requestTimeout,
 	}
 	log.Println("finished.")
 
@@ -146,7 +146,7 @@ func NewAuth(service, region string, origTransport http.RoundTripper) (http.Roun
 		transport: origTransport,
 		signer:    signer,
 		cfg:       sess.Config,
-		service:    service,
+		service:   service,
 	}
 	// return a RoundTripper
 	return &rtp, nil

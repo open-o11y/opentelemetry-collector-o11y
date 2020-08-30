@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -12,9 +11,11 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/tidwall/gjson"
 )
 
-func getQueryAndStore (outputPath string) {
+func getQueryAndStore(outputPath string) {
 	// check if queryPath is valid
 	url, err := url.ParseRequestURI(queryPath)
 	if err != nil {
@@ -59,7 +60,6 @@ func getQueryAndStore (outputPath string) {
 }
 
 func queryMetric(url *url.URL, name, mType string, labelSet []string, builder *strings.Builder) {
-
 
 	switch mType {
 	case gauge, counter:
@@ -186,7 +186,7 @@ func writeQueryNameTypeLabels(name, mType string, labels map[string]string, buil
 	// store keys and sort by keys so that output has the same order as input
 	keys := make([]string, 0, len(labels))
 
-	for k,_ := range labels {
+	for k := range labels {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
