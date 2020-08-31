@@ -55,4 +55,4 @@ service:
       exporters: [logging,prometheusremotewrite]
 ```
 
-see a complete list of configuration options and explanation of the prometheus remote write exporter [here](./exporter/prometheusremotewriteexporter/README.md)
+see a complete list of configuration options and explanation of the prometheus remote write exporter [here](./exporter/cortexexporter)
