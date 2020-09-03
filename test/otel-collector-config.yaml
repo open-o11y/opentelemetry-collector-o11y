@@ -4,7 +4,7 @@ receivers:
       grpc:
 exporters:
   cortex:
-    endpoint: "http://ec2-18-217-33-170.us-east-2.compute.amazonaws.com:9009/api/prom/push"
+    endpoint: "http://aps-workspaces-beta.us-west-2.amazonaws.com/workspaces/yang-yu-intern-test-ws/remote_write"
     namespace: ""
     aws_auth:
       enabled: true

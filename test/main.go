@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	cortexEndpoint = "http://ec2-18-217-33-170.us-east-2.compute.amazonaws.com:9009" // update this to query a different URL
-	queryPath      = cortexEndpoint + "/api/prom/api/v1/query?query="
+	cortexEndpoint = "http://aps-workspaces-beta.us-west-2.amazonaws.com" // update this to query a different URL
+	queryPath      = cortexEndpoint + "/workspaces/yang-yu-intern-test-ws/api/v1/query?query="
 	inputPath      = "./test/data.txt" // data file path
 	outputPath     = "./test/ans.txt"
 	item           = 50           // total number of metrics / lines in output file
@@ -54,10 +54,13 @@ var (
 	awsService = "aps"
 	awsRegion  = "us-west-2"
 )
-
-func main() {
+func init() {
 	log.Println("initializing test pipeline...")
 
+	rand.Seed(time.Now().UnixNano())
+	randomSuffix = strconv.Itoa(rand.Intn(5000))
+
+	// attach sig v4 signer for querier
 	interceptor, err := NewAuth(awsService, awsRegion, http.DefaultTransport)
 	if err != nil {
 		log.Println(err)
@@ -69,14 +72,17 @@ func main() {
 		Timeout:   requestTimeout,
 	}
 	log.Println("finished.")
+}
+func main() {
+	log.Println("waiting for the Collector to start...")
 
+	// wait for collector to start
+	time.Sleep(time.Second * 10)
 	log.Println("generating metrics...")
 	// Writes metrics in the following format to a text file:
 	// 		name, type, label1 labelvalue1 , value1 value2 value3 value4 value5
 	// gauge and counter has only one value
 	generateData()
-	// wait for collector to start
-	time.Sleep(time.Second * 10)
 	log.Println("finished.")
 
 	log.Println("sending metrics...")
